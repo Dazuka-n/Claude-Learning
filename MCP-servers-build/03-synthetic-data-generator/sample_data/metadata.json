@@ -1,0 +1,33 @@
+{
+  "METADATA_SPEC_VERSION": "MULTI_TABLE_V1",
+  "tables": {
+    "customers": {
+      "primary_key": "customer_id",
+      "columns": {
+        "customer_id": { "sdtype": "id" },
+        "name": { "sdtype": "categorical" },
+        "age": { "sdtype": "numerical", "computer_representation": "Int64" },
+        "city": { "sdtype": "categorical" },
+        "signup_date": { "sdtype": "datetime", "datetime_format": "%Y-%m-%d" }
+      }
+    },
+    "orders": {
+      "primary_key": "order_id",
+      "columns": {
+        "order_id": { "sdtype": "id" },
+        "customer_id": { "sdtype": "id" },
+        "product": { "sdtype": "categorical" },
+        "amount": { "sdtype": "numerical", "computer_representation": "Float" },
+        "order_date": { "sdtype": "datetime", "datetime_format": "%Y-%m-%d" }
+      }
+    }
+  },
+  "relationships": [
+    {
+      "parent_table_name": "customers",
+      "parent_primary_key": "customer_id",
+      "child_table_name": "orders",
+      "child_foreign_key": "customer_id"
+    }
+  ]
+}

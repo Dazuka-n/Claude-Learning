@@ -1,0 +1,5 @@
+fastmcp
+sdv
+pandas
+plotly
+kaleido

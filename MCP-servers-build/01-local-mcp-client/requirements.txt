@@ -1,0 +1,4 @@
+fastmcp
+llama-index
+llama-index-tools-mcp
+llama-index-llms-ollama

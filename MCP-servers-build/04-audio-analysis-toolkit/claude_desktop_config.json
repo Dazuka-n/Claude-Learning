@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "audio-analysis-toolkit": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\Office\\Desktop\\Projects\\Claude-Learning\\MCP-servers-build\\04-audio-analysis-toolkit\\server.py"
+      ],
+      "env": {
+        "ASSEMBLYAI_API_KEY": "your_key_here"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+customer_id,name,age,city,signup_date
+1,Alice Johnson,29,Seattle,2023-01-14
+2,Bob Smith,41,Portland,2023-02-03
+3,Carol Davis,35,Austin,2023-02-22
+4,David Lee,52,Boston,2023-03-10
+5,Eva Martinez,24,Miami,2023-03-28
+6,Frank Brown,33,Chicago,2023-04-11
+7,Grace Kim,46,Denver,2023-05-02
+8,Henry Wilson,38,Atlanta,2023-05-19
+9,Irene Patel,27,Phoenix,2023-06-07
+10,Jack Nguyen,31,Dallas,2023-06-25
