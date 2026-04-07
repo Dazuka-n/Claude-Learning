@@ -69,7 +69,7 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 </td>
 <td width="50%" align="center">
 
-[![AI Fluency: Framework & Foundations](./AI_Fluency_Frameworkand__Foundations.png)](https://verify.skilljar.com/c/v4c93asen3su)
+[![AI Fluency: Framework & Foundations](./AI_Fluency_Framework_and_Foundations.png)](https://verify.skilljar.com/c/v4c93asen3su)
 
 **AI Fluency: Framework & Foundations** · [Verify ↗](https://verify.skilljar.com/c/v4c93asen3su)
 
