@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATS Resume Builder — Built with Claude</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --surface2: #faf9f6;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --primary: #1F2A44;
+    --accent: #3E6AA7;
+    --accent-light: #A7C2EA;
+    --green: #2FB36A;
+    --text: #1F2A44;
+    --muted: #7a8099;
+    --skill-bg: #1F2A44;
+  }
+
+  body {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px;
+    background: var(--primary);
+    color: #fff;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-pill {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px; font-weight: 700; letter-spacing:.1em;
+    padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+  }
+  .project-title { font-size: 15px; font-weight: 700; }
+  .anthropic-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--accent-light);
+    border: 1px solid rgba(167,194,234,0.25);
+    padding: 5px 10px; border-radius: 6px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* SKILL PANEL */
+  .skill-panel {
+    width: 300px; min-width: 300px;
+    background: var(--skill-bg);
+    color: #c5cfe0;
+    border-right: none;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+    padding: 22px 18px;
+    gap: 14px;
+  }
+  .skill-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing:.12em; text-transform: uppercase;
+    color: var(--accent-light); margin-bottom: 2px;
+  }
+  .skill-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(167,194,234,0.15);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .skill-card h4 { font-size: 12px; font-weight: 700; color: var(--accent-light); margin-bottom: 8px; }
+  .skill-card p, .skill-card li {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px; color: rgba(197,207,224,0.7); line-height: 1.7;
+  }
+  .skill-card ul { padding-left: 14px; }
+  .prompt-block {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(167,194,234,0.1);
+    border-radius: 6px; padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; color: #8fa8d0; line-height: 1.75;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    background: rgba(47,179,106,0.15); color: #2FB36A;
+    border: 1px solid rgba(47,179,106,0.3);
+    padding: 3px 8px; border-radius: 20px;
+  }
+  .chat-link {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--accent-light); text-decoration: none;
+    border: 1px solid rgba(167,194,234,0.2);
+    padding: 10px 14px; border-radius: 8px;
+    transition: background .2s;
+  }
+  .chat-link:hover { background: rgba(167,194,234,0.08); }
+
+  /* TOOL PANEL */
+  .tool-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .tool-header {
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .tool-header h2 { font-size: 24px; font-weight: 900; letter-spacing:-.03em; color: var(--primary); }
+  .tool-header p { font-size: 13px; color: var(--muted); margin-top: 4px; font-family: 'DM Mono', monospace; }
+
+  .tool-body { flex:1; overflow-y: auto; padding: 22px 28px; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-row { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing:.07em; text-transform: uppercase; }
+
+  input, textarea, select {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 11px 14px;
+    color: var(--text); font-family: 'DM Mono', monospace;
+    font-size: 12.5px; outline: none;
+    transition: border-color .2s; resize: none; width: 100%;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  select option { background: #fff; }
+
+  .generate-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 14px 24px;
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-size: 14px; font-weight: 800; cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    display: flex; align-items: center; gap: 8px;
+    align-self: flex-start;
+  }
+  .generate-btn:hover { opacity:.85; }
+  .generate-btn:active { transform: scale(.98); }
+  .generate-btn:disabled { opacity:.4; cursor: not-allowed; }
+
+  .inspector-toggle {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    cursor: pointer; padding: 6px 0; user-select: none;
+    border: none; background: none; color: var(--muted);
+  }
+  .inspector-toggle:hover { color: var(--accent); }
+  .inspector-box {
+    background: var(--primary); color: #8fa8d0;
+    border-radius: 8px; padding: 14px;
+    font-family: 'DM Mono', monospace; font-size: 10.5px;
+    line-height: 1.7; white-space: pre-wrap; display: none;
+  }
+  .inspector-box.open { display: block; }
+
+  .output-area {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 10px; overflow: hidden;
+  }
+  .output-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .output-bar span { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .copy-btn {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--accent); background: none;
+    border: 1px solid var(--border2); padding: 4px 10px;
+    border-radius: 5px; cursor: pointer; transition: background .2s;
+  }
+  .copy-btn:hover { background: var(--bg); }
+  .output-content {
+    padding: 20px; font-family: 'DM Mono', monospace;
+    font-size: 12px; color: var(--text); line-height: 1.8;
+    white-space: pre-wrap; min-height: 180px;
+  }
+  .output-placeholder { color: var(--muted); font-style: italic; }
+  .loading-bar {
+    height: 2px; background: linear-gradient(90deg, var(--accent), var(--green));
+    animation: loading 1.2s ease-in-out infinite; display: none;
+  }
+  .loading-bar.active { display: block; }
+  @keyframes loading { 0%{width:0%;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0%;margin-left:100%} }
+
+  .footer {
+    padding: 12px 28px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface);
+  }
+  .footer-left { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .ttt-badge { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); }
+
+  /* BYOK — API key button + modal */
+  .key-status-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(167,194,234,0.25);
+    color: #fff;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .key-status-btn:hover { background: rgba(255,255,255,0.15); border-color: var(--accent-light); }
+  .key-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .key-status-dot.set { background: var(--green); box-shadow: 0 0 6px rgba(47,179,106,0.6); }
+  .key-status-dot.unset { background: #f59e0b; }
+
+  .key-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(31,42,68,0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .key-modal-overlay.open { display: flex; }
+  .key-modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(31,42,68,0.25);
+  }
+  .key-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .key-modal-header h3 {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-size: 17px; font-weight: 800;
+    color: var(--primary);
+  }
+  .key-modal-close {
+    background: none; border: none; color: var(--muted);
+    font-size: 24px; cursor: pointer; line-height: 1;
+    padding: 0 4px;
+  }
+  .key-modal-close:hover { color: var(--primary); }
+  .key-modal-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .key-modal-desc strong { color: var(--accent); }
+  .key-modal-desc code {
+    background: var(--surface2);
+    padding: 1px 5px; border-radius: 3px;
+    font-size: 10.5px;
+  }
+  #key-input { margin-bottom: 14px; }
+  .key-modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-bottom: 14px;
+  }
+  .key-btn-primary {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 6px;
+    padding: 9px 18px;
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer;
+  }
+  .key-btn-primary:hover { opacity: .88; }
+  .key-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    border-radius: 6px;
+    padding: 9px 18px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    cursor: pointer;
+  }
+  .key-btn-secondary:hover { color: var(--primary); border-color: var(--primary); }
+  .key-help-link {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    text-decoration: none;
+    text-align: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .key-help-link:hover { text-decoration: underline; }
+
+  @media (max-width: 768px) {
+    .main { flex-direction: column; }
+    .skill-panel { width: 100%; min-width: unset; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="logo-pill">TTT Project</span>
+    <span class="project-title">ATS Resume Builder</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="key-status-btn" onclick="openKeyModal()">
+      <span class="key-status-dot unset" id="key-status-dot"></span>
+      API Key
+    </button>
+    <div class="anthropic-badge">
+      <span class="dot"></span>
+      Powered by Claude Sonnet
+    </div>
+  </div>
+</div>
+
+<!-- BYOK MODAL -->
+<div class="key-modal-overlay" id="key-modal" onclick="if(event.target===this)closeKeyModal()">
+  <div class="key-modal">
+    <div class="key-modal-header">
+      <h3>Bring Your Own Claude API Key</h3>
+      <button class="key-modal-close" onclick="closeKeyModal()">&times;</button>
+    </div>
+    <p class="key-modal-desc">
+      This artifact runs on the <strong>Claude API</strong>. Paste your own key below — it's stored only in <strong>your browser's localStorage</strong> and sent directly to <code>api.anthropic.com</code>. Nothing is logged, proxied, or shared.
+    </p>
+    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="key-modal-actions">
+      <button class="key-btn-secondary" onclick="clearKey()">Clear</button>
+      <button class="key-btn-primary" onclick="saveKey()">Save Key</button>
+    </div>
+    <a href="https://console.anthropic.com/settings/keys" target="_blank" class="key-help-link">
+      Don't have a key? Get one at console.anthropic.com →
+    </a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="skill-panel">
+    <div>
+      <div class="skill-section-label">Claude Skill Showcase</div>
+      <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(197,207,224,0.6);line-height:1.7;margin-top:4px;">
+        Trained inside a Claude chat to understand ATS scoring, keyword extraction, and resume structure. Here's the engineering.
+      </p>
+    </div>
+
+    <div class="skill-card">
+      <h4>System Prompt</h4>
+      <div class="prompt-block">You are an expert ATS (Applicant Tracking System) resume writer and HR specialist.
+
+Your job:
+1. Extract keywords from the job description
+2. Rewrite experience bullets using those keywords
+3. Score each section for ATS compatibility
+4. Output a complete, clean resume in plain text
+
+Rules:
+- Use action verbs: Led, Built, Optimized, Delivered, Reduced
+- Quantify achievements wherever possible
+- Mirror exact phrases from the job description
+- No graphics, tables, or columns — ATS can't parse them
+- Include a Skills section with exact keyword matches</div>
+    </div>
+
+    <div class="skill-card">
+      <h4>Memory Design</h4>
+      <p>The chat retains the candidate's role level, industry, and target companies across iterations. Each revision refines the same resume — adding keywords missed in round one, adjusting tone for seniority.</p>
+    </div>
+
+    <div class="skill-card">
+      <h4>Prompt Strategy</h4>
+      <ul>
+        <li>Two-pass prompting: extract → rewrite</li>
+        <li>Job description as grounding context</li>
+        <li>Explicit ATS constraint list</li>
+        <li>Quantification instruction baked in</li>
+      </ul>
+    </div>
+
+    <div class="skill-card">
+      <h4>Claude Features Used</h4>
+      <div class="tag-row">
+        <span class="tag">System prompt</span>
+        <span class="tag">Long context</span>
+        <span class="tag">Memory</span>
+        <span class="tag">Iterative refinement</span>
+        <span class="tag">Claude API</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <h4>Built by</h4>
+      <p>Anisha Singla — Founder, Teeny Tech Trek<br>AI Solutions Studio · Mohali, India</p>
+    </div>
+
+    <a class="chat-link" href="https://claude.ai/project/019d3f62-3133-718f-8a4e-b6c4f76f171e" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      View original claude.ai chat →
+    </a>
+  </div>
+
+  <div class="tool-panel">
+    <div class="tool-header">
+      <h2>ATS Resume Builder</h2>
+      <p>Paste a job description + your experience — Claude rewrites your resume to beat the ATS.</p>
+    </div>
+
+    <div class="tool-body">
+      <div class="form-row">
+        <label>Job Description (paste the full JD)</label>
+        <textarea id="job-desc" rows="5" placeholder="Paste the job description here. Claude will extract ATS keywords from it and mirror them in your resume..."></textarea>
+      </div>
+
+      <div class="two-col">
+        <div class="form-row">
+          <label>Your Name</label>
+          <input type="text" id="candidate-name" placeholder="e.g. Priya Sharma" />
+        </div>
+        <div class="form-row">
+          <label>Target Role</label>
+          <input type="text" id="target-role" placeholder="e.g. Senior Product Manager" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Your Experience (bullet points or prose — raw is fine)</label>
+        <textarea id="experience" rows="5" placeholder="e.g. Worked on product roadmap for 3 years at a fintech startup. Led a team of 5. Launched 2 major features. Reduced churn by working with customer success..."></textarea>
+      </div>
+
+      <div class="two-col">
+        <div class="form-row">
+          <label>Skills (comma separated)</label>
+          <input type="text" id="skills" placeholder="e.g. Agile, SQL, Figma, JIRA, Python" />
+        </div>
+        <div class="form-row">
+          <label>Seniority Level</label>
+          <select id="seniority">
+            <option>Entry Level</option>
+            <option>Mid Level</option>
+            <option selected>Senior</option>
+            <option>Lead / Manager</option>
+            <option>Director+</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="generate-btn" id="gen-btn" onclick="generate()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Build ATS Resume
+      </button>
+
+      <div>
+        <button class="inspector-toggle" onclick="toggleInspector()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span id="inspector-label">See what Claude is being told →</span>
+        </button>
+        <div class="inspector-box" id="inspector"></div>
+      </div>
+
+      <div class="output-area">
+        <div class="output-bar">
+          <span id="output-status">Output · ATS Resume</span>
+          <button class="copy-btn" onclick="copyOutput()">Copy</button>
+        </div>
+        <div class="loading-bar" id="loader"></div>
+        <div class="output-content" id="output">
+          <span class="output-placeholder">Your ATS-optimized resume will appear here...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span class="footer-left">Teeny Tech Trek · Build small. Launch fast. Scale smart.</span>
+  <span class="ttt-badge">Built with Claude · Anthropic</span>
+</div>
+
+<script>
+const MODEL = 'claude-sonnet-4-5';
+const KEY_STORAGE = 'anthropic_api_key';
+
+function getApiKey() { return localStorage.getItem(KEY_STORAGE) || ''; }
+
+function updateKeyStatus() {
+  const dot = document.getElementById('key-status-dot');
+  if (!dot) return;
+  if (getApiKey()) { dot.classList.add('set'); dot.classList.remove('unset'); }
+  else { dot.classList.add('unset'); dot.classList.remove('set'); }
+}
+
+function openKeyModal() {
+  document.getElementById('key-input').value = getApiKey();
+  document.getElementById('key-modal').classList.add('open');
+  setTimeout(() => document.getElementById('key-input').focus(), 50);
+}
+
+function closeKeyModal() {
+  document.getElementById('key-modal').classList.remove('open');
+}
+
+function saveKey() {
+  const v = document.getElementById('key-input').value.trim();
+  if (!v) { alert('Please paste an API key.'); return; }
+  if (!v.startsWith('sk-ant-')) {
+    alert('That does not look like a valid Anthropic API key. It should start with "sk-ant-".');
+    return;
+  }
+  localStorage.setItem(KEY_STORAGE, v);
+  updateKeyStatus();
+  closeKeyModal();
+}
+
+function clearKey() {
+  localStorage.removeItem(KEY_STORAGE);
+  document.getElementById('key-input').value = '';
+  updateKeyStatus();
+}
+
+document.addEventListener('DOMContentLoaded', updateKeyStatus);
+
+const SYSTEM_PROMPT = `You are an expert ATS (Applicant Tracking System) resume writer and HR specialist with 15 years of experience helping candidates land interviews at top companies.
+
+Your process:
+1. Read the job description carefully and extract the top 10-15 ATS keywords (skills, tools, methodologies, qualifications)
+2. Rewrite the candidate's experience using those exact keywords where relevant
+3. Quantify every achievement you can (invent plausible numbers if none given, but keep them realistic)
+4. Structure the resume in ATS-safe plain text format
+
+Resume structure (use this exact order):
+[NAME]
+[email] | [phone] | LinkedIn | Location
+
+PROFESSIONAL SUMMARY
+2-3 sentences packed with keywords from the JD
+
+CORE SKILLS
+Comma-separated list of exact keyword matches from the JD
+
+PROFESSIONAL EXPERIENCE
+[Role] | [Company] | [Dates]
+• Action verb + keyword + quantified result
+(3-5 bullets per role)
+
+EDUCATION
+[Degree] | [Institution] | [Year]
+
+Rules:
+- Use strong action verbs: Led, Architected, Delivered, Optimized, Reduced, Scaled, Drove, Built
+- Mirror exact phrases from the job description
+- No tables, columns, graphics, or special characters — ATS cannot parse them
+- Put keywords in context, not just lists
+- Output ONLY the resume text. No explanation, no preamble.`;
+
+function buildUserPrompt() {
+  const jd = document.getElementById('job-desc').value.trim() || 'No job description provided.';
+  const name = document.getElementById('candidate-name').value.trim() || 'Candidate Name';
+  const role = document.getElementById('target-role').value.trim() || 'Professional';
+  const exp = document.getElementById('experience').value.trim() || 'No experience provided.';
+  const skills = document.getElementById('skills').value.trim() || 'Not specified';
+  const seniority = document.getElementById('seniority').value;
+
+  return `JOB DESCRIPTION:
+${jd}
+
+CANDIDATE DETAILS:
+Name: ${name}
+Target Role: ${role}
+Seniority: ${seniority}
+Raw Experience: ${exp}
+Skills: ${skills}
+
+Please build the complete ATS-optimized resume now.`;
+}
+
+let inspectorOpen = false;
+function toggleInspector() {
+  inspectorOpen = !inspectorOpen;
+  const box = document.getElementById('inspector');
+  const label = document.getElementById('inspector-label');
+  if (inspectorOpen) {
+    box.classList.add('open');
+    box.textContent = `SYSTEM PROMPT:\n${SYSTEM_PROMPT}\n\nUSER MESSAGE:\n${buildUserPrompt()}`;
+    label.textContent = 'Hide Claude prompt ↑';
+  } else {
+    box.classList.remove('open');
+    label.textContent = 'See what Claude is being told →';
+  }
+}
+
+async function generate() {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    openKeyModal();
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  const loader = document.getElementById('loader');
+  const output = document.getElementById('output');
+  const status = document.getElementById('output-status');
+
+  btn.disabled = true;
+  loader.classList.add('active');
+  status.textContent = 'Generating...';
+  output.innerHTML = '<span class="output-placeholder">Claude is optimizing your resume for ATS...</span>';
+
+  if (inspectorOpen) {
+    document.getElementById('inspector').textContent = `SYSTEM PROMPT:\n${SYSTEM_PROMPT}\n\nUSER MESSAGE:\n${buildUserPrompt()}`;
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 2000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: buildUserPrompt() }]
+      })
+    });
+    const data = await response.json();
+    if (data.error) {
+      output.textContent = `API Error: ${data.error.message || data.error.type}\n\nIf this is an auth error, click "API Key" in the top-right and check your key.`;
+      status.textContent = 'Output · Error';
+    } else {
+      const text = data.content?.[0]?.text || 'Error: no response received.';
+      output.textContent = text;
+      status.textContent = 'Output · ATS Resume · Done';
+    }
+  } catch (e) {
+    output.innerHTML = '<span class="output-placeholder">Network error connecting to Claude API. Check your internet connection and try again.</span>';
+    status.textContent = 'Output · Error';
+  }
+
+  btn.disabled = false;
+  loader.classList.remove('active');
+}
+
+function copyOutput() {
+  const text = document.getElementById('output').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+</script>
+</body>
+</html>

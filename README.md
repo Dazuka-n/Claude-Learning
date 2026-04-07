@@ -26,7 +26,7 @@
 [![Canva](https://img.shields.io/badge/Canva-MCP_SSE-00C4CC?style=for-the-badge&logo=canva&logoColor=white)](https://canva.com)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Auto_Scheduler-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](.)
 [![Claude](https://img.shields.io/badge/Claude_Code-Scriptable_CLI-F97316?style=for-the-badge)](.)
-[![Artifacts](https://img.shields.io/badge/Artifacts-2_AI--Powered-22C55E?style=for-the-badge)](.)
+[![Artifacts](https://img.shields.io/badge/Artifacts-3_BYOK_Tools-22C55E?style=for-the-badge)](./artifacts/README.md)
 
 </div>
 
@@ -206,47 +206,82 @@ Chart types: `bar` · `line` · `donut` · `annotated stat card`
 
 ## ⚡ Artifacts
 
-> Claude-powered React (JSX) apps — **call the Anthropic API from inside the artifact itself**.
+> Three single-file HTML artifacts that **call the Claude API directly from the browser** — with a built-in **BYOK (Bring Your Own Key)** flow so visitors test with their own credits. No backend, no proxy, no build step.
 
-### ATS-Friendly Resume Builder
+<div align="center">
 
-```
-Input  → Paste Job Description + your experience
-           ↓
-Call 1 → Extract ATS keywords from JD as JSON
-           ↓
-Call 2 → Rewrite experience bullets using extracted keywords
-           ↓
-Call 3 → Generate tailored professional summary
-           ↓
-Output → 3 sections with copy-to-clipboard on each
-```
+[![BYOK](https://img.shields.io/badge/BYOK-Bring_Your_Own_Key-22C55E?style=flat-square)](./artifacts/README.md)
+[![Model](https://img.shields.io/badge/Model-claude--sonnet--4--5-D97757?style=flat-square&logo=anthropic&logoColor=white)](./artifacts/README.md)
+[![No Backend](https://img.shields.io/badge/No_Backend-Static_HTML-818CF8?style=flat-square)](./artifacts/README.md)
 
-**UI:** Two text inputs · staged loading indicator · copy-to-clipboard per section
+</div>
 
-`📁 03-artifacts/ats-resume-builder.jsx`
+Each artifact has two sides — a **Skill Panel** (system prompt, memory design, prompt strategy) on the left, and a **Live Tool** on the right. A "See what Claude is being told →" button reveals the literal prompt being sent. The skill is visible, not just the output.
+
+> 📖 **Full context:** see [`artifacts/README.md`](./artifacts/README.md)
 
 ---
 
-### README.md Builder
+### 1. README Generator — `readme-generator.html`
 
 ```
-Input  → Structured form:
-         project name · stack · install steps · usage · features · author
+Input  → Project name · type · description · stack · license
            ↓
-Call 1 → Single API call with structured system prompt
+Prompt → Conditional tone routing (library/tool/api/webapp/agent)
            ↓
-Output → Full GitHub-flavoured README.md:
-         badges · TOC · code blocks · file tree · contributing section
+Output → Full GitHub-flavoured README.md
+         badges · TOC · ✨ Features · 🚀 Install · 💻 Usage · tech table
 ```
 
-**System prompt core:**
+**Theme:** Dark terminal · **System prompt:** *"senior open-source developer and technical writer"* · **Output discipline:** raw markdown only, no code fences.
+
+[🔗 Live claude.ai project](https://claude.ai/project/019d66fd-fb9d-7040-8d77-678792e41574)
+
+---
+
+### 2. ATS Resume Builder — `ats-resume-builder.html`
+
 ```
-"You are a senior developer who writes exemplary README files.
-Output only raw markdown, no commentary."
+Input  → Paste Job Description + raw experience + seniority
+           ↓
+Pass 1 → Extract top 10–15 ATS keywords from the JD
+           ↓
+Pass 2 → Rewrite bullets using exact keywords + quantified results
+           ↓
+Output → ATS-safe plain text resume (no tables, no columns)
 ```
 
-`📁 03-artifacts/readme-builder.jsx`
+**Theme:** Editorial light · **Technique:** two-pass reasoning compressed into one call · **Constraint guard:** no tables / columns / graphics — ATS can't parse them.
+
+[🔗 Live claude.ai project](https://claude.ai/project/019d3f62-3133-718f-8a4e-b6c4f76f171e)
+
+---
+
+### 3. Social Post Scheduler — `social-post-scheduler.html`
+
+```
+Input  → Topic · brand voice · audience · platforms · post count
+           ↓
+Prompt → Per-platform tone matrix + anti-duplication constraint
+           ↓
+Output → Strict JSON → rendered as cards
+         (LinkedIn · Twitter/X · Instagram · Threads, Mon–Fri)
+```
+
+**Theme:** Modern cards · **Technique:** structured JSON output + platform-conditional tone rules · **Rule:** *NEVER use the same copy across platforms.*
+
+[🔗 Live claude.ai project](https://claude.ai/project/019d5271-25a5-769a-82e9-3f44e9593741)
+
+---
+
+### 🔑 BYOK in 10 Seconds
+
+1. Open any `.html` file in a browser
+2. Click the **"API Key"** button (top-right) — amber dot = no key, green dot = ready
+3. Paste your `sk-ant-...` key → Save
+4. Generate
+
+The key is stored only in `localStorage` and sent **directly** to `api.anthropic.com`. Nothing is logged, proxied, or shared. Full details in [`artifacts/README.md`](./artifacts/README.md).
 
 ---
 
@@ -423,9 +458,12 @@ Claude-Learning/
 │   ├── data-visual-post.md         ← web_search → chart → copy flow
 │   └── content-repurposing.md      ← URL/text → 3–5 standalone posts
 │
-├── artifacts/
-│   ├── ats-resume-builder.jsx      ← Claude-powered · 3 sequential API calls
-│   └── readme-builder.jsx          ← Claude-powered · structured form → full README
+├── artifacts/                      ← see artifacts/README.md for full context
+│   ├── README.md                   ← public-facing artifact docs
+│   ├── showcase-guide.md           ← private publishing playbook
+│   ├── readme-generator.html       ← single-file BYOK tool · dark terminal theme
+│   ├── ats-resume-builder.html     ← single-file BYOK tool · editorial light theme
+│   └── social-post-scheduler.html  ← single-file BYOK tool · modern card theme
 │
 ├── 04-workflows/
 │   ├── content-queue.md            ← [ ] pending · [x] posted
@@ -460,8 +498,8 @@ Claude-Learning/
 | **SDV HMASynthesizer** | Hierarchical synthetic data generation |
 | **Claude Code** | Scriptable CLI — entry point for automated workflows |
 | **Windows Task Scheduler** | Cron equivalent — fires the LinkedIn pipeline daily |
-| **Anthropic API** | Powers Claude-in-artifact calls (Resume Builder, README Builder) |
-| **React (JSX)** | Artifact UI framework |
+| **Anthropic API** | Direct browser calls from artifacts (BYOK — `x-api-key` + `anthropic-dangerous-direct-browser-access`) |
+| **Vanilla HTML/CSS/JS** | Artifact UI — single-file, zero-dependency, no build step |
 | **plotly / Chart.js** | Data visualization in Skill 2 posts |
 
 </div>

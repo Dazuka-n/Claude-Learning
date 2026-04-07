@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Post Scheduler — Built with Claude</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fdfcfa;
+    --surface: #ffffff;
+    --surface2: #f7f6f2;
+    --border: rgba(31,42,68,0.08);
+    --border2: rgba(31,42,68,0.15);
+    --primary: #3E6AA7;
+    --dark: #1F2A44;
+    --accent: #A7C2EA;
+    --green: #2FB36A;
+    --amber: #f59e0b;
+    --text: #1F2A44;
+    --muted: #8a94aa;
+    --skill-bg: #0d1117;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-pill {
+    background: var(--primary); color: #fff;
+    font-size: 10px; font-weight: 700; letter-spacing:.1em;
+    padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+  }
+  .project-title { font-size: 15px; font-weight: 700; }
+  .anthropic-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    padding: 5px 10px; border-radius: 6px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* SKILL PANEL */
+  .skill-panel {
+    width: 300px; min-width: 300px;
+    background: var(--skill-bg);
+    display: flex; flex-direction: column;
+    overflow-y: auto; padding: 22px 18px; gap: 14px;
+  }
+  .skill-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing:.12em; text-transform: uppercase;
+    color: #7c9dbf; margin-bottom: 2px;
+  }
+  .skill-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .skill-card h4 { font-size: 12px; font-weight: 700; color: #7c9dbf; margin-bottom: 8px; }
+  .skill-card p, .skill-card li {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px; color: rgba(140,160,190,0.7); line-height: 1.7;
+  }
+  .skill-card ul { padding-left: 14px; }
+  .prompt-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px; padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; color: #7c9dbf; line-height: 1.75;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    background: rgba(47,179,106,0.12); color: #2FB36A;
+    border: 1px solid rgba(47,179,106,0.25);
+    padding: 3px 8px; border-radius: 20px;
+  }
+  .chat-link {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: #7c9dbf; text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 14px; border-radius: 8px;
+    transition: background .2s;
+  }
+  .chat-link:hover { background: rgba(255,255,255,0.05); }
+
+  /* TOOL PANEL */
+  .tool-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .tool-header {
+    padding: 20px 28px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .tool-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -.02em; color: var(--dark);
+  }
+  .tool-header p { font-size: 13px; color: var(--muted); margin-top: 5px; font-family: 'DM Mono', monospace; }
+
+  .tool-body { flex:1; overflow-y: auto; padding: 22px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+  .platform-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .platform-btn {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    border: 1px solid var(--border2); background: var(--surface);
+    color: var(--muted); padding: 7px 14px; border-radius: 6px;
+    cursor: pointer; transition: all .15s; user-select: none;
+  }
+  .platform-btn.active {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+  }
+
+  .form-row { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing:.07em; text-transform: uppercase; }
+
+  input, textarea, select {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 11px 14px;
+    color: var(--text); font-family: 'DM Mono', monospace;
+    font-size: 12.5px; outline: none;
+    transition: border-color .2s; resize: none; width: 100%;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .generate-btn {
+    background: var(--dark); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 14px 24px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    display: flex; align-items: center; gap: 8px;
+    align-self: flex-start;
+  }
+  .generate-btn:hover { opacity:.85; }
+  .generate-btn:active { transform: scale(.98); }
+  .generate-btn:disabled { opacity:.4; cursor: not-allowed; }
+
+  .inspector-toggle {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    cursor: pointer; padding: 6px 0; user-select: none;
+    border: none; background: none; color: var(--muted);
+  }
+  .inspector-toggle:hover { color: var(--primary); }
+  .inspector-box {
+    background: var(--skill-bg); color: #7c9dbf;
+    border-radius: 8px; padding: 14px;
+    font-family: 'DM Mono', monospace; font-size: 10.5px;
+    line-height: 1.7; white-space: pre-wrap; display: none;
+  }
+  .inspector-box.open { display: block; }
+
+  /* OUTPUT: CARD GRID */
+  .posts-grid { display: flex; flex-direction: column; gap: 14px; }
+  .post-card {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 12px; overflow: hidden;
+  }
+  .post-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .platform-pill {
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: .05em;
+  }
+  .pill-li { background: #e8f0fb; color: #0a66c2; }
+  .pill-tw { background: #e7f5ff; color: #1da1f2; }
+  .pill-ig { background: #fce8ff; color: #833ab4; }
+  .pill-th { background: #fff0e8; color: #ff6600; }
+  .day-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .copy-btn-sm {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--primary); background: none;
+    border: 1px solid var(--border2); padding: 3px 8px;
+    border-radius: 4px; cursor: pointer; transition: background .2s;
+  }
+  .copy-btn-sm:hover { background: var(--surface2); }
+  .post-content {
+    padding: 14px 16px;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--text); line-height: 1.75;
+    white-space: pre-wrap;
+  }
+
+  .loading-area {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 40px;
+    display: none; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .loading-area.active { display: flex; }
+  .loading-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+  .loading-bar-outer { width: 200px; height: 2px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .loading-bar-inner {
+    height: 100%; background: linear-gradient(90deg, var(--primary), var(--green));
+    animation: loading 1.4s ease-in-out infinite;
+  }
+  @keyframes loading { 0%{width:0%;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0%;margin-left:100%} }
+
+  .placeholder-area {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 40px;
+    text-align: center; color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .footer {
+    padding: 12px 28px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface);
+  }
+  .footer-left { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .ttt-badge { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--primary); }
+
+  /* BYOK — API key button + modal */
+  .key-status-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .key-status-btn:hover { background: var(--surface2); border-color: var(--primary); }
+  .key-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .key-status-dot.set { background: var(--green); box-shadow: 0 0 6px rgba(47,179,106,0.6); }
+  .key-status-dot.unset { background: var(--amber); }
+
+  .key-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(31,42,68,0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .key-modal-overlay.open { display: flex; }
+  .key-modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 26px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(31,42,68,0.25);
+  }
+  .key-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .key-modal-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--dark);
+    letter-spacing: -.01em;
+  }
+  .key-modal-close {
+    background: none; border: none; color: var(--muted);
+    font-size: 24px; cursor: pointer; line-height: 1;
+    padding: 0 4px;
+  }
+  .key-modal-close:hover { color: var(--dark); }
+  .key-modal-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .key-modal-desc strong { color: var(--primary); }
+  .key-modal-desc code {
+    background: var(--surface2);
+    padding: 1px 5px; border-radius: 3px;
+    font-size: 10.5px;
+  }
+  #key-input { margin-bottom: 14px; }
+  .key-modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-bottom: 14px;
+  }
+  .key-btn-primary {
+    background: var(--dark); color: #fff;
+    border: none; border-radius: 6px;
+    padding: 10px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer;
+  }
+  .key-btn-primary:hover { opacity: .88; }
+  .key-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    cursor: pointer;
+  }
+  .key-btn-secondary:hover { color: var(--dark); border-color: var(--dark); }
+  .key-help-link {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--primary);
+    text-decoration: none;
+    text-align: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .key-help-link:hover { text-decoration: underline; }
+
+  @media (max-width: 768px) {
+    .main { flex-direction: column; }
+    .skill-panel { width: 100%; min-width: unset; }
+    .three-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="logo-pill">TTT Project</span>
+    <span class="project-title">Social Post Scheduler</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="key-status-btn" onclick="openKeyModal()">
+      <span class="key-status-dot unset" id="key-status-dot"></span>
+      API Key
+    </button>
+    <div class="anthropic-badge">
+      <span class="dot"></span>
+      Powered by Claude Sonnet
+    </div>
+  </div>
+</div>
+
+<!-- BYOK MODAL -->
+<div class="key-modal-overlay" id="key-modal" onclick="if(event.target===this)closeKeyModal()">
+  <div class="key-modal">
+    <div class="key-modal-header">
+      <h3>Bring Your Own Claude API Key</h3>
+      <button class="key-modal-close" onclick="closeKeyModal()">&times;</button>
+    </div>
+    <p class="key-modal-desc">
+      This artifact runs on the <strong>Claude API</strong>. Paste your own key below — it's stored only in <strong>your browser's localStorage</strong> and sent directly to <code>api.anthropic.com</code>. Nothing is logged, proxied, or shared.
+    </p>
+    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="key-modal-actions">
+      <button class="key-btn-secondary" onclick="clearKey()">Clear</button>
+      <button class="key-btn-primary" onclick="saveKey()">Save Key</button>
+    </div>
+    <a href="https://console.anthropic.com/settings/keys" target="_blank" class="key-help-link">
+      Don't have a key? Get one at console.anthropic.com →
+    </a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="skill-panel">
+    <div>
+      <div class="skill-section-label">Claude Skill Showcase</div>
+      <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(140,160,190,0.6);line-height:1.7;margin-top:4px;">
+        Trained to understand platform tone differences, content repurposing, and weekly cadence planning. Here's the engineering.
+      </p>
+    </div>
+
+    <div class="skill-card">
+      <h4>System Prompt</h4>
+      <div class="prompt-block">You are a social media strategist who specializes in content repurposing across platforms.
+
+For each platform, match its native tone:
+- LinkedIn: Professional, insight-driven, 1st person, story arc
+- Twitter/X: Punchy, < 280 chars, hooks first, end with CTA
+- Instagram: Visual-first language, conversational, emoji-rich
+- Threads: Casual, thoughtful, no hard sell
+
+Rules:
+- Never post the same copy across platforms
+- Use platform-native formats (threads on X, carousels on IG)
+- Include hashtags appropriate to each platform
+- Space posts across Mon–Fri for optimal timing</div>
+    </div>
+
+    <div class="skill-card">
+      <h4>Memory Design</h4>
+      <p>The chat holds brand voice, target audience, and content pillars across the session. Weekly batches stay tonally consistent because Claude "remembers" the persona between requests.</p>
+    </div>
+
+    <div class="skill-card">
+      <h4>Prompt Strategy</h4>
+      <ul>
+        <li>Platform-conditional tone rules</li>
+        <li>Explicit anti-duplication constraint</li>
+        <li>Day-of-week scheduling awareness</li>
+        <li>Structured JSON output for easy parsing</li>
+      </ul>
+    </div>
+
+    <div class="skill-card">
+      <h4>Claude Features Used</h4>
+      <div class="tag-row">
+        <span class="tag">System prompt</span>
+        <span class="tag">Structured output</span>
+        <span class="tag">Memory</span>
+        <span class="tag">Multi-platform logic</span>
+        <span class="tag">Claude API</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <h4>Built by</h4>
+      <p>Anisha Singla — Founder, Teeny Tech Trek<br>AI Solutions Studio · Mohali, India</p>
+    </div>
+
+    <a class="chat-link" href="https://claude.ai/project/019d5271-25a5-769a-82e9-3f44e9593741" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      View original claude.ai chat →
+    </a>
+  </div>
+
+  <div class="tool-panel">
+    <div class="tool-header">
+      <h2>Social Post Scheduler</h2>
+      <p>Describe your topic — Claude writes a week of platform-native posts ready to schedule.</p>
+    </div>
+
+    <div class="tool-body">
+
+      <div class="form-row">
+        <label>Platforms to generate for</label>
+        <div class="platform-row">
+          <button class="platform-btn active" data-platform="LinkedIn" onclick="togglePlatform(this)">LinkedIn</button>
+          <button class="platform-btn active" data-platform="Twitter/X" onclick="togglePlatform(this)">Twitter / X</button>
+          <button class="platform-btn" data-platform="Instagram" onclick="togglePlatform(this)">Instagram</button>
+          <button class="platform-btn" data-platform="Threads" onclick="togglePlatform(this)">Threads</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Content Topic / This Week's Theme</label>
+        <textarea id="topic" rows="3" placeholder="e.g. How small businesses can use AI automation to save 10 hours a week — targeting founders and ops leads who are curious about AI but haven't started yet."></textarea>
+      </div>
+
+      <div class="three-col">
+        <div class="form-row">
+          <label>Brand Voice</label>
+          <select id="voice">
+            <option>Authoritative but approachable</option>
+            <option>Casual and conversational</option>
+            <option>Bold and provocative</option>
+            <option>Warm and educational</option>
+            <option>Technical and precise</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Target Audience</label>
+          <input type="text" id="audience" placeholder="e.g. Startup founders" />
+        </div>
+        <div class="form-row">
+          <label>Posts Per Platform</label>
+          <select id="post-count">
+            <option value="3">3 posts (Mon/Wed/Fri)</option>
+            <option value="5" selected>5 posts (Mon–Fri)</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="generate-btn" id="gen-btn" onclick="generate()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Generate Week of Posts
+      </button>
+
+      <div>
+        <button class="inspector-toggle" onclick="toggleInspector()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span id="inspector-label">See what Claude is being told →</span>
+        </button>
+        <div class="inspector-box" id="inspector"></div>
+      </div>
+
+      <div class="loading-area" id="loading-area">
+        <div class="loading-label">Claude is writing your posts...</div>
+        <div class="loading-bar-outer"><div class="loading-bar-inner"></div></div>
+      </div>
+
+      <div class="placeholder-area" id="placeholder">
+        Select platforms, describe your topic, and click Generate.<br>
+        Claude will write a week of posts — each one tuned to its platform.
+      </div>
+
+      <div class="posts-grid" id="posts-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span class="footer-left">Teeny Tech Trek · Build small. Launch fast. Scale smart.</span>
+  <span class="ttt-badge">Built with Claude · Anthropic</span>
+</div>
+
+<script>
+const MODEL = 'claude-sonnet-4-5';
+const KEY_STORAGE = 'anthropic_api_key';
+
+function getApiKey() { return localStorage.getItem(KEY_STORAGE) || ''; }
+
+function updateKeyStatus() {
+  const dot = document.getElementById('key-status-dot');
+  if (!dot) return;
+  if (getApiKey()) { dot.classList.add('set'); dot.classList.remove('unset'); }
+  else { dot.classList.add('unset'); dot.classList.remove('set'); }
+}
+
+function openKeyModal() {
+  document.getElementById('key-input').value = getApiKey();
+  document.getElementById('key-modal').classList.add('open');
+  setTimeout(() => document.getElementById('key-input').focus(), 50);
+}
+
+function closeKeyModal() {
+  document.getElementById('key-modal').classList.remove('open');
+}
+
+function saveKey() {
+  const v = document.getElementById('key-input').value.trim();
+  if (!v) { alert('Please paste an API key.'); return; }
+  if (!v.startsWith('sk-ant-')) {
+    alert('That does not look like a valid Anthropic API key. It should start with "sk-ant-".');
+    return;
+  }
+  localStorage.setItem(KEY_STORAGE, v);
+  updateKeyStatus();
+  closeKeyModal();
+}
+
+function clearKey() {
+  localStorage.removeItem(KEY_STORAGE);
+  document.getElementById('key-input').value = '';
+  updateKeyStatus();
+}
+
+document.addEventListener('DOMContentLoaded', updateKeyStatus);
+
+const SYSTEM_PROMPT = `You are a social media strategist who specializes in content repurposing and platform-native writing.
+
+Platform tone rules (strictly follow these):
+- LinkedIn: Professional, insight-driven, 1st-person narrative, story arc with a lesson, end with a question or CTA, 150–300 words
+- Twitter/X: Punchy hook in first line, under 280 characters per tweet, end with actionable CTA or question
+- Instagram: Visual-first language, use 3–5 relevant emoji, conversational, end with 5–8 hashtags on a new line
+- Threads: Casual, thoughtful, no hard sell, feels like talking to a smart friend
+
+Rules:
+- NEVER use the same copy across platforms — each must feel native
+- Spread posts across Mon, Tue, Wed, Thu, Fri
+- For 3 posts: Mon, Wed, Fri
+- Include hashtags appropriate to each platform
+- For Twitter/X: keep each tweet under 280 chars
+
+Output format — return ONLY valid JSON, no markdown fences, no explanation:
+{
+  "posts": [
+    {
+      "platform": "LinkedIn",
+      "day": "Monday",
+      "content": "post text here"
+    }
+  ]
+}`;
+
+function getActivePlatforms() {
+  return Array.from(document.querySelectorAll('.platform-btn.active')).map(b => b.dataset.platform);
+}
+
+function togglePlatform(btn) {
+  btn.classList.toggle('active');
+}
+
+function buildUserPrompt() {
+  const platforms = getActivePlatforms();
+  const topic = document.getElementById('topic').value.trim() || 'AI productivity tips for small businesses';
+  const voice = document.getElementById('voice').value;
+  const audience = document.getElementById('audience').value.trim() || 'founders and operators';
+  const count = document.getElementById('post-count').value;
+
+  return `Generate ${count} posts per platform for the following platforms: ${platforms.join(', ')}.
+
+Topic / Theme: ${topic}
+Brand voice: ${voice}
+Target audience: ${audience}
+Posts per platform: ${count}
+
+Write all posts now and return valid JSON only.`;
+}
+
+const pillClass = { 'LinkedIn': 'pill-li', 'Twitter/X': 'pill-tw', 'Instagram': 'pill-ig', 'Threads': 'pill-th' };
+
+function renderPosts(posts) {
+  const grid = document.getElementById('posts-grid');
+  grid.innerHTML = '';
+  posts.forEach((post, i) => {
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    const pc = pillClass[post.platform] || 'pill-li';
+    card.innerHTML = `
+      <div class="post-card-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="platform-pill ${pc}">${post.platform}</span>
+          <span class="day-label">${post.day}</span>
+        </div>
+        <button class="copy-btn-sm" onclick="copyCard(this, ${i})">Copy</button>
+      </div>
+      <div class="post-content" id="post-content-${i}">${post.content}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function copyCard(btn, i) {
+  const text = document.getElementById('post-content-' + i).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+let inspectorOpen = false;
+function toggleInspector() {
+  inspectorOpen = !inspectorOpen;
+  const box = document.getElementById('inspector');
+  const label = document.getElementById('inspector-label');
+  if (inspectorOpen) {
+    box.classList.add('open');
+    box.textContent = `SYSTEM PROMPT:\n${SYSTEM_PROMPT}\n\nUSER MESSAGE:\n${buildUserPrompt()}`;
+    label.textContent = 'Hide Claude prompt ↑';
+  } else {
+    box.classList.remove('open');
+    label.textContent = 'See what Claude is being told →';
+  }
+}
+
+async function generate() {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    openKeyModal();
+    return;
+  }
+
+  const platforms = getActivePlatforms();
+  if (platforms.length === 0) { alert('Select at least one platform.'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  const loader = document.getElementById('loading-area');
+  const placeholder = document.getElementById('placeholder');
+  const grid = document.getElementById('posts-grid');
+
+  btn.disabled = true;
+  loader.classList.add('active');
+  placeholder.style.display = 'none';
+  grid.innerHTML = '';
+
+  if (inspectorOpen) {
+    document.getElementById('inspector').textContent = `SYSTEM PROMPT:\n${SYSTEM_PROMPT}\n\nUSER MESSAGE:\n${buildUserPrompt()}`;
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 3000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: buildUserPrompt() }]
+      })
+    });
+    const data = await response.json();
+    if (data.error) {
+      grid.innerHTML = `<div class="placeholder-area">API Error: ${data.error.message || data.error.type}<br><br>If this is an auth error, click "API Key" in the top-right and check your key.</div>`;
+    } else {
+      const raw = data.content?.[0]?.text || '{}';
+      const clean = raw.replace(/```json|```/g, '').trim();
+      try {
+        const parsed = JSON.parse(clean);
+        renderPosts(parsed.posts || []);
+      } catch (parseErr) {
+        grid.innerHTML = `<div class="placeholder-area">Claude returned a response but it wasn't valid JSON. Try again — model responses can occasionally vary.</div>`;
+      }
+    }
+  } catch (e) {
+    grid.innerHTML = '<div class="placeholder-area">Network error connecting to Claude API. Check your internet connection and try again.</div>';
+  }
+
+  btn.disabled = false;
+  loader.classList.remove('active');
+}
+</script>
+</body>
+</html>
