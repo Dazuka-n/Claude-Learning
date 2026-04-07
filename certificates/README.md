@@ -57,6 +57,24 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 
 </td>
 </tr>
+<tr>
+<td width="50%" align="center">
+
+[![Model Context Protocol: Advanced Topics](./MCP_adv_Topics.png)](https://verify.skilljar.com/c/4e36ncyud5pw)
+
+**Model Context Protocol: Advanced Topics** · [Verify ↗](https://verify.skilljar.com/c/4e36ncyud5pw)
+
+*Issued: April 7, 2026*
+
+</td>
+<td width="50%" align="center">
+
+[![AI Fluency: Framework & Foundations](./AI_Fluency_Frameworkand__Foundations.png)](https://verify.skilljar.com/c/v4c93asen3su)
+
+**AI Fluency: Framework & Foundations** · [Verify ↗](https://verify.skilljar.com/c/v4c93asen3su)
+
+</td>
+</tr>
 </table>
 
 ---
@@ -69,6 +87,8 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 | Introduction to Claude Cowork | — | [verify.skilljar.com/c/4cys2qppchfx](https://verify.skilljar.com/c/4cys2qppchfx) |
 | Introduction to Model Context Protocol | April 5, 2026 | [verify.skilljar.com/c/bzbfz8xoggtb](https://verify.skilljar.com/c/bzbfz8xoggtb) |
 | Introduction to Subagents | — | [verify.skilljar.com/c/5c4yicjfu2fq](https://verify.skilljar.com/c/5c4yicjfu2fq) |
+| Model Context Protocol: Advanced Topics | April 7, 2026 | [verify.skilljar.com/c/4e36ncyud5pw](https://verify.skilljar.com/c/4e36ncyud5pw) |
+| AI Fluency: Framework & Foundations | — | [verify.skilljar.com/c/v4c93asen3su](https://verify.skilljar.com/c/v4c93asen3su) |
 
 ---
 
