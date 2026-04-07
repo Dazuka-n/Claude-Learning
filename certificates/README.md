@@ -81,14 +81,14 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 
 | Certificate | Issued | Verify |
 |:---|:---:|:---|
-| Claude 101 | — | [verify.skilljar.com/c/hkqcwrqv8hbu](https://verify.skilljar.com/c/hkqcwrqv8hbu) |
+| Claude 101 | March 28, 2026 | [verify.skilljar.com/c/hkqcwrqv8hbu](https://verify.skilljar.com/c/hkqcwrqv8hbu) |
 | Claude Code in Action | April 5, 2026 | [verify.skilljar.com/c/pp6f8o6ipodz](https://verify.skilljar.com/c/pp6f8o6ipodz) |
-| Introduction to Agent Skills | — | [verify.skilljar.com/c/wwh8dachdk4c](https://verify.skilljar.com/c/wwh8dachdk4c) |
-| Introduction to Claude Cowork | — | [verify.skilljar.com/c/4cys2qppchfx](https://verify.skilljar.com/c/4cys2qppchfx) |
+| Introduction to Agent Skills | April 5, 2026 | [verify.skilljar.com/c/4cys2qppchfx](https://verify.skilljar.com/c/4cys2qppchfx) |
+| Introduction to Claude Cowork | March 28, 2026 | [verify.skilljar.com/c/wwh8dachdk4c](https://verify.skilljar.com/c/wwh8dachdk4c) |
 | Introduction to Model Context Protocol | April 5, 2026 | [verify.skilljar.com/c/bzbfz8xoggtb](https://verify.skilljar.com/c/bzbfz8xoggtb) |
-| Introduction to Subagents | — | [verify.skilljar.com/c/5c4yicjfu2fq](https://verify.skilljar.com/c/5c4yicjfu2fq) |
+| Introduction to Subagents | April 5, 2026 | [verify.skilljar.com/c/5c4yicjfu2fq](https://verify.skilljar.com/c/5c4yicjfu2fq) |
 | Model Context Protocol: Advanced Topics | April 7, 2026 | [verify.skilljar.com/c/4e36ncyud5pw](https://verify.skilljar.com/c/4e36ncyud5pw) |
-| AI Fluency: Framework & Foundations | — | [verify.skilljar.com/c/v4c93asen3su](https://verify.skilljar.com/c/v4c93asen3su) |
+| AI Fluency: Framework & Foundations | April 7, 2026 | [verify.skilljar.com/c/v4c93asen3su](https://verify.skilljar.com/c/v4c93asen3su) |
 
 ---
 
