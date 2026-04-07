@@ -12,6 +12,29 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 
 **Claude 101** · [Verify ↗](https://verify.skilljar.com/c/hkqcwrqv8hbu)
 
+*Issued: March 28, 2026*
+
+</td>
+<td width="50%" align="center">
+
+[![Introduction to Claude Cowork](./introduction_to_claude_cowork.png)](https://verify.skilljar.com/c/wwh8dachdk4c)
+
+**Introduction to Claude Cowork** · [Verify ↗](https://verify.skilljar.com/c/wwh8dachdk4c)
+
+*Issued: March 28, 2026*
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" align="center">
+
+[![Introduction to Agent Skills](./introduction_to_agent_skills.png)](https://verify.skilljar.com/c/4cys2qppchfx)
+
+**Introduction to Agent Skills** · [Verify ↗](https://verify.skilljar.com/c/4cys2qppchfx)
+
+*Issued: April 5, 2026*
+
 </td>
 <td width="50%" align="center">
 
@@ -20,22 +43,6 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 **Claude Code in Action** · [Verify ↗](https://verify.skilljar.com/c/pp6f8o6ipodz)
 
 *Issued: April 5, 2026*
-
-</td>
-</tr>
-<tr>
-<td width="50%" align="center">
-
-[![Introduction to Agent Skills](./introduction_to_agent_skills.png)](https://verify.skilljar.com/c/wwh8dachdk4c)
-
-**Introduction to Agent Skills** · [Verify ↗](https://verify.skilljar.com/c/wwh8dachdk4c)
-
-</td>
-<td width="50%" align="center">
-
-[![Introduction to Claude Cowork](./introduction_to_claude_cowork.png)](https://verify.skilljar.com/c/4cys2qppchfx)
-
-**Introduction to Claude Cowork** · [Verify ↗](https://verify.skilljar.com/c/4cys2qppchfx)
 
 </td>
 </tr>
@@ -55,6 +62,8 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 
 **Introduction to Subagents** · [Verify ↗](https://verify.skilljar.com/c/5c4yicjfu2fq)
 
+*Issued: April 5, 2026*
+
 </td>
 </tr>
 <tr>
@@ -72,6 +81,8 @@ Certificates of completion issued by **Anthropic** for the Claude learning curri
 [![AI Fluency: Framework & Foundations](./AI_Fluency_Framework_and_Foundations.png)](https://verify.skilljar.com/c/v4c93asen3su)
 
 **AI Fluency: Framework & Foundations** · [Verify ↗](https://verify.skilljar.com/c/v4c93asen3su)
+
+*Issued: April 7, 2026*
 
 </td>
 </tr>
